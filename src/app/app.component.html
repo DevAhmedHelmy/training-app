@@ -1,1 +1,15 @@
-<router-outlet></router-outlet>
+<mat-sidenav-container>
+  <mat-sidenav #sideNave role="navigation">Start</mat-sidenav>
+  <mat-sidenav-content>
+    <!-- <button (click)="sideNave.toggle()">dddddddddddddddd</button>
+     -->
+
+    <mat-toolbar>
+      <span>My Application</span>
+    </mat-toolbar>
+
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
