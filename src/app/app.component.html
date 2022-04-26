@@ -1,13 +1,15 @@
 <mat-sidenav-container>
-  <mat-sidenav #sideNave role="navigation">Start</mat-sidenav>
+  <mat-sidenav #sideNave role="navigation">
+    <app-side-nav
+      (closeSidenav)="sideNave.close()"
+      [lists]="lists"
+    ></app-side-nav>
+  </mat-sidenav>
   <mat-sidenav-content>
-    <!-- <button (click)="sideNave.toggle()">dddddddddddddddd</button>
-     -->
-
-    <mat-toolbar>
-      <span>My Application</span>
-    </mat-toolbar>
-
+    <app-header
+      (sidenavToggle)="sideNave.toggle()"
+      [lists]="lists"
+    ></app-header> 
     <main>
       <router-outlet></router-outlet>
     </main>

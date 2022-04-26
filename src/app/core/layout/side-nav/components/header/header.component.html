@@ -1,0 +1,16 @@
+<mat-toolbar color="primary">
+    <div fxHide.gt-xs>
+      <button mat- (click)="OnToggleSideNav()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+    <div><a routerLink="/">Logo</a></div>
+
+    <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
+      <ul fxLayout fxLayoutGap="10px" class="navigation-items">
+        <li *ngFor="let list of lists">
+          <a routerLink="{{ list.url }}">{{ list.name }}</a>
+        </li>
+      </ul>
+    </div>
+  </mat-toolbar>

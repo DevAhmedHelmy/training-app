@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +6,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'training-app';
-  openSideNav = false;
+
+  lists=[
+    {name:'signup','icon':'face',url:'/signup'},
+    {name:'login','icon':'input',url:'/login'},
+    {name:'training','icon':'fitness_center',url:'/training'}
+  ]
+  // @ViewChild('sideNave') sideNave:ElementRef;
+  // onToggle(){
+  //   this.sideNave.toggle();
+  // }
 }
