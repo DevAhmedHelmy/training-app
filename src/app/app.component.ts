@@ -7,11 +7,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class AppComponent {
 
-  lists=[
-    {name:'signup','icon':'face',url:'/signup'},
-    {name:'login','icon':'input',url:'/login'},
-    {name:'training','icon':'fitness_center',url:'/training'}
-  ]
+   
   // @ViewChild('sideNave') sideNave:ElementRef;
   // onToggle(){
   //   this.sideNave.toggle();

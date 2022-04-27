@@ -1,15 +1,9 @@
 <mat-sidenav-container>
   <mat-sidenav #sideNave role="navigation">
-    <app-side-nav
-      (closeSidenav)="sideNave.close()"
-      [lists]="lists"
-    ></app-side-nav>
+    <app-side-nav (closeSidenav)="sideNave.close()"></app-side-nav>
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-header
-      (sidenavToggle)="sideNave.toggle()"
-      [lists]="lists"
-    ></app-header> 
+    <app-header (sidenavToggle)="sideNave.toggle()"></app-header>
     <main>
       <router-outlet></router-outlet>
     </main>
