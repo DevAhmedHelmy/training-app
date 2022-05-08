@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 
 import { TrainingRoutingModule } from './training-routing.module';
 import { TrainingComponent } from './training.component';
@@ -8,10 +8,9 @@ import { NewTrainingComponent } from './components/new-training/new-training.com
 import { PastTrainingComponent } from './components/past-training/past-training.component';
 import { CoreModule } from '../core/core.module';
 import { StopTrainingComponent } from './components/stop-training/stop-training.component';
-import { FormsModule } from '@angular/forms';
-import { AngularFireModule } from '@angular/fire/compat';
- 
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { FormsModule } from '@angular/forms'; 
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 
 @NgModule({
@@ -22,8 +21,14 @@ import { environment } from 'src/environments/environment';
     PastTrainingComponent,
     StopTrainingComponent,
   ],
-  imports: [CommonModule, TrainingRoutingModule, CoreModule,FormsModule,AngularFireModule.initializeApp(environment.firebase),
+  imports: [
+    CommonModule,
+    TrainingRoutingModule,
+    CoreModule,
+    FormsModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
     
-    AngularFirestoreModule,],
+  ],
 })
 export class TrainingModule {}

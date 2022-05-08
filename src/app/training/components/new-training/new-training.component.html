@@ -8,12 +8,13 @@
         <mat-form-field appearance="fill">
           <mat-label>Cars</mat-label>
           <mat-select ngModel name="exercise" required>
-            <mat-option *ngFor="let exe of newExecires" [value]="exe.id">
+            <mat-option *ngFor="let exe of newExecires$ | async" [value]="exe.id">
               {{ exe.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </mat-card-content>
+      
       <mat-card-actions fxLayoutAlign="center">
         <button mat-button [disabled]="f.invalid">Start</button>
       </mat-card-actions>
