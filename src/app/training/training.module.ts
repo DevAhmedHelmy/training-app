@@ -9,6 +9,10 @@ import { PastTrainingComponent } from './components/past-training/past-training.
 import { CoreModule } from '../core/core.module';
 import { StopTrainingComponent } from './components/stop-training/stop-training.component';
 import { FormsModule } from '@angular/forms';
+import { AngularFireModule } from '@angular/fire/compat';
+ 
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -18,6 +22,8 @@ import { FormsModule } from '@angular/forms';
     PastTrainingComponent,
     StopTrainingComponent,
   ],
-  imports: [CommonModule, TrainingRoutingModule, CoreModule,FormsModule],
+  imports: [CommonModule, TrainingRoutingModule, CoreModule,FormsModule,AngularFireModule.initializeApp(environment.firebase),
+    
+    AngularFirestoreModule,],
 })
 export class TrainingModule {}
