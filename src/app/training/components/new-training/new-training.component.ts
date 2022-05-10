@@ -22,24 +22,14 @@ export class NewTrainingComponent implements OnInit {
     private firestore: Firestore
   ) {}
 
-  ngOnInit(): void { 
-
-     
-
+  ngOnInit(): void {  
     const data = collection(this.firestore, 'availableExercises');
     getDocs(data)
       .then((response) => {
         this.newExecires = [...response.docs.map((item) => { 
           return { ...item.data(), id: item.id }
         })]
-      })
-   
-     
-    // const dd = ddd.docs.map(doc => doc.data()); 
-    // console.log(getDocs(data));     
-    // collectionData(data).subscribe(res=>{console.log(res);
-   
-      
+      }) 
   
   }
   onSatrtTraining(form: NgForm) {
