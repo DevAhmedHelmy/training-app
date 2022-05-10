@@ -15,7 +15,7 @@ export class NewTrainingComponent implements OnInit {
   @Output() startTraining = new EventEmitter<void>();
   doc: DocumentReference;
   newExecires$: Observable<any[]>;
-  newExecires: Exercise[]; 
+  newExecires: any=[]; 
 
   constructor(
     private trainService: TrainingService,
@@ -24,16 +24,19 @@ export class NewTrainingComponent implements OnInit {
 
   ngOnInit(): void { 
 
-    const ref = doc(this.firestore, 'availableExercises', 'availableExercises');
-     docSnapshots(ref).pipe(map(data => console.log(data)));
-
+     
 
     const data = collection(this.firestore, 'availableExercises');
-    const ddd = getDocs(data);
-    const dd = ddd.docs.map(doc => doc.data()); 
-    console.log(getDocs(data));
-
+    getDocs(data)
+      .then((response) => {
+        this.newExecires = [...response.docs.map((item) => { 
+          return { ...item.data(), id: item.id }
+        })]
+      })
+   
      
+    // const dd = ddd.docs.map(doc => doc.data()); 
+    // console.log(getDocs(data));     
     // collectionData(data).subscribe(res=>{console.log(res);
    
       
