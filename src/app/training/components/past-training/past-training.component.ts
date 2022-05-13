@@ -8,26 +8,29 @@ import { TrainingService } from '../../services/training.service';
 @Component({
   selector: 'app-past-training',
   templateUrl: './past-training.component.html',
-  styleUrls: ['./past-training.component.css']
+  styleUrls: ['./past-training.component.css'],
 })
-export class PastTrainingComponent implements OnInit,AfterViewInit {
-  displayedColumns=['date','name','duration','calorise','state']
+export class PastTrainingComponent implements OnInit, AfterViewInit {
+  displayedColumns = ['date', 'name', 'duration', 'calorise', 'state'];
   dataSource = new MatTableDataSource<Exercise>();
-  @ViewChild(MatSort) sort:MatSort
-  @ViewChild(MatPaginator) paginator:MatPaginator
-  constructor(private trainingService:TrainingService) { }
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  constructor(private trainService: TrainingService) {}
 
   ngOnInit(): void {
-    this.dataSource.data = this.trainingService.getCompletedOrCanceledExercise()
+    this.trainService.exercisesChanged.subscribe((exercises) => {
+       this.dataSource.data = exercises;
+    });
+    this.trainService.fetchCompletedOrCanceledExercise();
+
   }
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator
+    this.dataSource.paginator = this.paginator;
   }
 
-  doFilter(event:any){
+  doFilter(event: any) {
     let filterValue = event.target.value;
     this.dataSource.filter = filterValue.trim().toLocaleLowerCase();
   }
-
 }

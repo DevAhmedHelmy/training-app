@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { collection, Firestore, getDocs, setDoc, doc } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
 import { Exercise } from '../exercise.model';
 
@@ -7,24 +8,34 @@ import { Exercise } from '../exercise.model';
 })
 export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
-  availableExercises: Exercise[] = [
-    { id: 'test1', name: 'test name1', duration: 10, calorise: 1 },
-    { id: 'test2', name: 'test name2', duration: 20, calorise: 2 },
-    { id: 'test3', name: 'test name3', duration: 30, calorise: 3 },
-    { id: 'test3', name: 'test name3', duration: 30, calorise: 3 },
-    { id: 'test4', name: 'test name4', duration: 40, calorise: 4 },
-  ];
+  exercisesChanged = new Subject<Exercise[]>();
+  finishedExercisesChanged = new Subject<any[]>();
 
+  availableExercises: any = [];
   runningExercise: any;
   exercises: Exercise[] = [];
 
-  getAvailableExercises() {
-    return this.availableExercises.slice();
+  constructor(private firestore: Firestore) {}
+
+  fetchAvailableExercises() {
+    const data = collection(this.firestore, 'availableExercises');
+    getDocs(data)
+      .then((response) => {
+        return [
+          ...response.docs.map((item) => {
+            return { id: item.id, ...item.data() };
+          }),
+        ];
+      })
+      .then((response) => {
+        this.availableExercises = response;
+        this.exercisesChanged.next([...this.availableExercises]);
+      });
   }
 
   startExercise(selectedId: string) {
     this.runningExercise = this.availableExercises.find(
-      (ex) => ex.id === selectedId
+      (ex: { id: string }) => ex.id === selectedId
     );
     this.exerciseChanged.next({ ...this.runningExercise });
   }
@@ -34,7 +45,7 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.exercises.push({
+    this.addDataToDatabase({
       ...this.runningExercise,
       date: new Date(),
       state: 'complete',
@@ -43,11 +54,11 @@ export class TrainingService {
     this.exerciseChanged.next(this.runningExercise);
   }
 
-  cancelExercise(progress:number) {
-    this.exercises.push({
+  cancelExercise(progress: number) {
+    this.addDataToDatabase({
       ...this.runningExercise,
-      duration:this.runningExercise.duration * (progress*100),
-      calorise:this.runningExercise.duration * (progress*100),
+      duration: this.runningExercise.duration * (progress * 100),
+      calorise: this.runningExercise.duration * (progress * 100),
       date: new Date(),
       state: 'canceld',
     });
@@ -55,7 +66,26 @@ export class TrainingService {
     this.exerciseChanged.next(this.runningExercise);
   }
 
-  getCompletedOrCanceledExercise(){
-    return this.exercises.slice();
+  fetchCompletedOrCanceledExercise() {
+    const data = collection(this.firestore, 'finishedExercises');
+    getDocs(data)
+      .then((response) => {
+        return [
+          ...response.docs.map((item) => {
+            return { id: item.id, ...item.data() };
+          }),
+        ];
+      })
+      .then((response) => {
+
+        this.finishedExercisesChanged.next(response);
+      });
+  }
+
+  // private function addDataToDatabase
+  private addDataToDatabase(exercise: Exercise) {
+    // use setDoc to add data to the collection
+    const newCityRef = doc(collection(this.firestore, 'finishedExercises'));
+    setDoc(newCityRef, exercise);
   }
 }
