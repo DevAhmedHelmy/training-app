@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { AuthData } from '../atuh.data.model';
 import { User } from '../user.model';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   authChange = new Subject<boolean>();
   private user:User
-  constructor(private router:Router) { }
+  constructor(private router:Router,private auth:AngularFireAuth) { }
 
 
   register(authData:AuthData){
@@ -18,7 +19,7 @@ export class AuthService {
       userId:Math.round(Math.random()*10000).toString()
     }
     this.authSuccesslly();
-    
+
   }
   login(authData:AuthData){
     this.user={
@@ -26,7 +27,7 @@ export class AuthService {
       userId:Math.round(Math.random()*10000).toString()
     }
     this.authSuccesslly();
-  } 
+  }
 
   logout(){
     this.user={email:'',userId:''};

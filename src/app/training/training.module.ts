@@ -8,10 +8,12 @@ import { NewTrainingComponent } from './components/new-training/new-training.com
 import { PastTrainingComponent } from './components/past-training/past-training.component';
 import { CoreModule } from '../core/core.module';
 import { StopTrainingComponent } from './components/stop-training/stop-training.component';
-import { FormsModule } from '@angular/forms'; 
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { FormsModule } from '@angular/forms';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
+
+// angular fire auth module
 
 @NgModule({
   declarations: [
@@ -28,7 +30,7 @@ import { environment } from 'src/environments/environment';
     FormsModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
-    
+
   ],
 })
 export class TrainingModule {}

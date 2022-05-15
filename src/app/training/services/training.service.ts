@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { collection, Firestore, getDocs, setDoc, doc } from '@angular/fire/firestore';
+import { collection, Firestore, getDocs, setDoc, doc, updateDoc } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
 import { Exercise } from '../exercise.model';
 
@@ -34,6 +34,11 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string) {
+    // update using doc
+    const docRef = doc(this.firestore, 'availableExercises', selectedId);
+    updateDoc(docRef, {
+      lastSelected: new Date()
+    });
     this.runningExercise = this.availableExercises.find(
       (ex: { id: string }) => ex.id === selectedId
     );
