@@ -10,16 +10,20 @@ export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
   exercisesChanged = new Subject<Exercise[]>();
   finishedExercisesChanged = new Subject<any[]>();
-
   availableExercises: any = [];
   runningExercise: any;
   exercises: Exercise[] = [];
 
+
   constructor(private firestore: Firestore) {}
+
+
+
+
 
   fetchAvailableExercises() {
     const data = collection(this.firestore, 'availableExercises');
-    getDocs(data)
+     getDocs(data)
       .then((response) => {
         return [
           ...response.docs.map((item) => {
@@ -30,7 +34,7 @@ export class TrainingService {
       .then((response) => {
         this.availableExercises = response;
         this.exercisesChanged.next([...this.availableExercises]);
-      });
+      }).catch((error) => {console.log(error)});
   }
 
   startExercise(selectedId: string) {
@@ -82,8 +86,10 @@ export class TrainingService {
         ];
       })
       .then((response) => {
-
         this.finishedExercisesChanged.next(response);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
