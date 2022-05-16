@@ -1,54 +1,50 @@
 <section class="login-form">
-    <form
-      action=""
-      fxLayout="column"
-      fxLayoutAlign="center center"
-      fxLayoutGap="10px"
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-
-    >
-      <mat-form-field>
-        <input
-          type="email"
-          matInput
-          placeholder="your email"
-          ngModel
-          name="email"
-          required
-          formControlName="email"
-        />
-        <!-- <mat-error >
+  <form
+    action=""
+    fxLayout="column"
+    fxLayoutAlign="center center"
+    fxLayoutGap="10px"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <mat-form-field>
+      <input
+        type="email"
+        matInput
+        placeholder="your email"
+        ngModel
+        name="email"
+        required
+        formControlName="email"
+      />
+      <!-- <mat-error >
           Please enter your email address
         </mat-error> -->
-        <mat-error  >
-          Please enter a valid email address
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field hintLabel="Should be a least 6 characters long.">
-        <input
-          type="password"
-          matInput
-          placeholder="your password"
-          ngModel
-          name="email"
-          required
-          formControlName="password"
-        />
+      <mat-error> Please enter a valid email address </mat-error>
+    </mat-form-field>
+    <mat-form-field hintLabel="Should be a least 6 characters long.">
+      <input
+        type="password"
+        matInput
+        placeholder="your password"
+        ngModel
+        name="email"
+        required
+        formControlName="password"
+      />
 
-        <mat-error> Has to be at least 6 characters long. </mat-error>
-        <mat-hint align="end">   / 6 </mat-hint>
-      </mat-form-field>
-      <button
-      *ngIf="!isLoading"
-        type="submit"
-        mat-raised-button
-        color="primary"
-
-        [disabled]="!form.valid"
-      >
-        Submit
-      </button>
-      <mat-spinner *ngIf="isLoading"></mat-spinner>
-    </form>
-  </section>
+      <mat-error> Has to be at least 6 characters long. </mat-error>
+      <mat-hint align="end"> / 6 </mat-hint>
+    </mat-form-field>
+    <button
+      *ngIf="!(isLoading$ | async)"
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="!form.valid"
+    >
+      Submit
+    </button>
+    <mat-spinner *ngIf="isLoading$ | async"></mat-spinner>
+  </form>
+</section>
