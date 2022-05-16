@@ -13,6 +13,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 
 
+
 @NgModule({
   declarations: [LoginComponent, SignupComponent],
   imports: [
@@ -25,5 +26,6 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
   ],
+
 })
 export class AuthModule {}

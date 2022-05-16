@@ -5,6 +5,7 @@ import { MaterialModule } from './material/material.module';
 
 
 
+
 @NgModule({
   declarations: [],
   imports: [
@@ -15,6 +16,6 @@ import { MaterialModule } from './material/material.module';
   exports:[
     MaterialModule,
     SideNavModule
-  ]
+  ],
 })
 export class CoreModule { }

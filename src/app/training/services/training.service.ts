@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
-import { collection, Firestore, getDocs, setDoc, doc, updateDoc } from '@angular/fire/firestore';
+import {
+  collection,
+  Firestore,
+  getDocs,
+  setDoc,
+  doc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
+import { UIService } from 'src/app/core/services/ui.service';
+
 import { Exercise } from '../exercise.model';
 
 @Injectable({
@@ -8,23 +17,20 @@ import { Exercise } from '../exercise.model';
 })
 export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
-  exercisesChanged = new Subject<Exercise[]>();
-  finishedExercisesChanged = new Subject<any[]>();
+  exercisesChanged = new Subject<any>();
+  finishedExercisesChanged = new Subject<any>();
   availableExercises: any = [];
   runningExercise: any;
   exercises: Exercise[] = [];
 
-
-  constructor(private firestore: Firestore) {}
-
-
-
-
+  constructor(private firestore: Firestore, private uiService: UIService) {}
 
   fetchAvailableExercises() {
+    this.uiService.loadingStateChanged.next(true);
     const data = collection(this.firestore, 'availableExercises');
-     getDocs(data)
+    getDocs(data)
       .then((response) => {
+
         return [
           ...response.docs.map((item) => {
             return { id: item.id, ...item.data() };
@@ -32,16 +38,27 @@ export class TrainingService {
         ];
       })
       .then((response) => {
+        this.uiService.loadingStateChanged.next(false);
         this.availableExercises = response;
         this.exercisesChanged.next([...this.availableExercises]);
-      }).catch((error) => {console.log(error)});
+      })
+      .catch((error) => {
+        this.uiService.loadingStateChanged.next(false);
+        this.uiService.showSnackbar(
+          'Fetching exerises faild, please try again later',
+          null,
+          3000
+        );
+        this.exercisesChanged.next(null);
+
+      });
   }
 
   startExercise(selectedId: string) {
     // update using doc
     const docRef = doc(this.firestore, 'availableExercises', selectedId);
     updateDoc(docRef, {
-      lastSelected: new Date()
+      lastSelected: new Date(),
     });
     this.runningExercise = this.availableExercises.find(
       (ex: { id: string }) => ex.id === selectedId
@@ -89,13 +106,11 @@ export class TrainingService {
         this.finishedExercisesChanged.next(response);
       })
       .catch((error) => {
-        console.log(error);
+        this.uiService.showSnackbar(error.message, null, 3000);
       });
   }
 
-  // private function addDataToDatabase
   private addDataToDatabase(exercise: Exercise) {
-    // use setDoc to add data to the collection
     const newCityRef = doc(collection(this.firestore, 'finishedExercises'));
     setDoc(newCityRef, exercise);
   }

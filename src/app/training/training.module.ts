@@ -13,6 +13,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 
+
 // angular fire auth module
 
 @NgModule({
@@ -30,7 +31,7 @@ import { environment } from 'src/environments/environment';
     FormsModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
-
   ],
+
 })
 export class TrainingModule {}

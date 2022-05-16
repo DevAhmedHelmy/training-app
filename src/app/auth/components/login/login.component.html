@@ -6,7 +6,7 @@
       fxLayoutGap="10px"
       [formGroup]="form"
       (ngSubmit)="onSubmit()"
-   
+
     >
       <mat-form-field>
         <input
@@ -35,19 +35,20 @@
           required
           formControlName="password"
         />
-         
+
         <mat-error> Has to be at least 6 characters long. </mat-error>
         <mat-hint align="end">   / 6 </mat-hint>
-      </mat-form-field> 
+      </mat-form-field>
       <button
+      *ngIf="!isLoading"
         type="submit"
         mat-raised-button
         color="primary"
-        
+
         [disabled]="!form.valid"
       >
         Submit
       </button>
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
     </form>
   </section>
-  

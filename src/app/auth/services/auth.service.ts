@@ -10,6 +10,8 @@ import {
   signOut,
   onAuthStateChanged,
 } from '@angular/fire/auth';
+import { UIService } from 'src/app/core/services/ui.service';
+
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,11 @@ export class AuthService {
   authChange = new Subject<boolean>();
   private user: User;
   private isAuthenticated: boolean = false;
-  constructor(private router: Router, private auth: Auth) {}
+  constructor(
+    private router: Router,
+    private auth: Auth,
+    private uiService: UIService
+  ) {}
 
   initAuthListener() {
     onAuthStateChanged(this.auth, (user: any) => {
@@ -40,20 +46,20 @@ export class AuthService {
   register(authData: AuthData) {
     console.log(authData);
     createUserWithEmailAndPassword(this.auth, authData.email, authData.password)
-      .then((response) => {
-        console.log(response);
-      })
+      .then((response) => {})
       .catch((error) => {
-        console.log(error);
+        this.uiService.showSnackbar(error.message, null, 3000);
       });
   }
   login(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     signInWithEmailAndPassword(this.auth, authData.email, authData.password)
       .then((response) => {
-        console.log(response);
+        this.uiService.loadingStateChanged.next(false);
       })
       .catch((error) => {
-        console.log(error);
+        this.uiService.loadingStateChanged.next(false);
+        this.uiService.showSnackbar(error.message, null, 3000);
       });
   }
 
