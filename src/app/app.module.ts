@@ -7,7 +7,7 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
 import {StoreModule} from '@ngrx/store';
-import {appReducer} from './app.reducer';
+import {reducers} from './app.reducer';
 
 
 @NgModule({
@@ -21,7 +21,7 @@ import {appReducer} from './app.reducer';
     BrowserAnimationsModule,
     AuthModule,
     CoreModule,
-    StoreModule.forRoot({ui:appReducer})
+    StoreModule.forRoot(reducers)
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -5,7 +5,8 @@ import { AuthData } from '../atuh.data.model';
 import { User } from '../user.model';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as fromApp from '../../app.reducer';
+import * as fromRoot from '../../app.reducer';
+import * as UI from '../../shared/ui.actions';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -27,7 +28,7 @@ export class AuthService {
     private router: Router,
     private auth: Auth,
     private uiService: UIService,
-    private store: Store<{ ui:fromApp.State }>
+    private store: Store<fromRoot.State>
   ) {}
 
   initAuthListener() {
@@ -48,7 +49,7 @@ export class AuthService {
     });
   }
   register(authData: AuthData) {
-    this.store.dispatch({type: 'START_LOADING'});
+    this.store.dispatch(new UI.StartLoading());
     createUserWithEmailAndPassword(this.auth, authData.email, authData.password)
       .then((response) => {})
       .catch((error) => {
@@ -57,14 +58,14 @@ export class AuthService {
   }
   login(authData: AuthData) {
     // this.uiService.loadingStateChanged.next(true);
-    this.store.dispatch({ type: 'START_LOADING' });
+    this.store.dispatch(new UI.StartLoading());
     signInWithEmailAndPassword(this.auth, authData.email, authData.password)
       .then((response) => {
-        this.store.dispatch({ type: 'STOP_LOADING' });
+        this.store.dispatch(new UI.StopLoading());
         // this.uiService.loadingStateChanged.next(false);
       })
       .catch((error) => {
-        this.store.dispatch({ type: 'STOP_LOADING' });
+        this.store.dispatch(new UI.StopLoading());
         // this.uiService.loadingStateChanged.next(false);
         this.uiService.showSnackbar(error.message, null, 3000);
       });
