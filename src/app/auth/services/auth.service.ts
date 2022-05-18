@@ -15,7 +15,7 @@ import {
   onAuthStateChanged,
 } from '@angular/fire/auth';
 import { UIService } from 'src/app/core/services/ui.service';
-
+import * as AuthActions from '../store/auth.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -38,11 +38,13 @@ export class AuthService {
           email: user.email,
           userId: user.uid,
         };
-        this.isAuthenticated = true;
+
+        this.store.dispatch(new AuthActions.SetAuthenticated());
         this.authChange.next(true);
         this.router.navigate(['/training']);
       } else {
-        this.authChange.next(false);
+
+        this.store.dispatch(new AuthActions.SetUnauthenticated());
         this.router.navigate(['/login']);
         this.isAuthenticated = false;
       }
@@ -51,7 +53,9 @@ export class AuthService {
   register(authData: AuthData) {
     this.store.dispatch(new UI.StartLoading());
     createUserWithEmailAndPassword(this.auth, authData.email, authData.password)
-      .then((response) => {})
+      .then((response) => {
+        this.store.dispatch(new AuthActions.SetAuthenticated());
+      })
       .catch((error) => {
         this.uiService.showSnackbar(error.message, null, 3000);
       });
@@ -62,6 +66,7 @@ export class AuthService {
     signInWithEmailAndPassword(this.auth, authData.email, authData.password)
       .then((response) => {
         this.store.dispatch(new UI.StopLoading());
+        this.store.dispatch(new AuthActions.SetAuthenticated());
         // this.uiService.loadingStateChanged.next(false);
       })
       .catch((error) => {
@@ -73,6 +78,7 @@ export class AuthService {
 
   logout() {
     signOut(this.auth);
+    this.store.dispatch(new AuthActions.SetUnauthenticated());
   }
   getUser() {
     return { ...this.user };
