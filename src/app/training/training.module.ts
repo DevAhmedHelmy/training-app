@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
-
+import { StoreModule } from '@ngrx/store';
+import { trainingReducer } from './store/training.reducer';
 
 // angular fire auth module
 
@@ -31,6 +32,7 @@ import { environment } from 'src/environments/environment';
     FormsModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
+    StoreModule.forFeature('training', trainingReducer),
   ],
 
 })

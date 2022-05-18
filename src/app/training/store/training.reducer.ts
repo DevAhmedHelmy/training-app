@@ -9,6 +9,7 @@ import {
 } from './training.actions';
 
 import * as fromRoot from '../../app.reducer';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 export interface TrainingState {
   availableExercises: Exercise[];
   finishedExercises: Exercise[];
@@ -19,14 +20,13 @@ export interface State extends fromRoot.State {
   training: TrainingState;
 }
 
-
 const initialState: TrainingState = {
   availableExercises: [],
   finishedExercises: [],
-  activeTraining:null
+  activeTraining: null,
 };
 
-export function authReducer(state = initialState, action: TrainingActions) {
+export function trainingReducer(state = initialState, action: TrainingActions) {
   switch (action.type) {
     case SET_AVAILABLE_TRAINING:
       return {
@@ -51,13 +51,33 @@ export function authReducer(state = initialState, action: TrainingActions) {
     case START_TRAINING:
       return {
         ...state,
-        activeTraining: action.payload,
+        activeTraining: {...
+          state.availableExercises.find(
+            (ex) => ex.id === action.payload
+          ),
+        }
       };
     default:
       return state;
   }
 }
 
-export const getAvailableTrainings = (state: TrainingState) => state.availableExercises;
-export const getFinishedTrainings = (state: TrainingState) => state.finishedExercises;
-export const getActiveTraining = (state: TrainingState) => state.activeTraining;
+export const getTrainingState =
+  createFeatureSelector<TrainingState>('training');
+
+export const getAvailableTrainings = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.availableExercises
+);
+export const getFinishedTrainings = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.finishedExercises
+);
+export const getActiveTraining = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.activeTraining
+);
+export const getIsTraining = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.activeTraining!==null
+);

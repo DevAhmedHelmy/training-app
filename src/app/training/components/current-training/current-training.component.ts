@@ -1,11 +1,12 @@
+import { take } from 'rxjs';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
+  MatDialog
 } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { TrainingService } from '../../services/training.service';
 import { StopTrainingComponent } from '../stop-training/stop-training.component';
+import * as fromTraining from '../../store/training.reducer';
 @Component({
   selector: 'app-current-training',
   templateUrl: './current-training.component.html',
@@ -16,36 +17,42 @@ export class CurrentTrainingComponent implements OnInit {
   progress = 0;
   timer: number;
 
-  constructor(private dialog: MatDialog,private trainingService:TrainingService) {}
+  constructor(
+    private dialog: MatDialog,
+    private trainingService: TrainingService,
+    private store: Store<fromTraining.State>
+  ) {}
 
   ngOnInit(): void {
     this.startOrResumeTimer();
   }
-  startOrResumeTimer(){
-    const step = this.trainingService.getRunningExercise().duration / 100*1000;
-    this.timer = setInterval(() => {
-      this.progress += 1;
-      if (this.progress >= 100) {
-        this.trainingService.completeExercise()
-        clearInterval(this.timer);
-      }
-    }, step);
+  startOrResumeTimer() {
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1)).subscribe((exercise) => {
+
+      const step = (exercise.duration / 100) * 1000;
+      this.timer = setInterval(() => {
+        this.progress += 1;
+        if (this.progress >= 100) {
+          this.trainingService.completeExercise();
+          clearInterval(this.timer);
+        }
+      }, step);
+    });
+
   }
   onStop() {
     clearInterval(this.timer);
     const dialogRef = this.dialog.open(StopTrainingComponent, {
       width: '250px',
-      data: {progress: this.progress},
+      data: { progress: this.progress },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if(result){
-        this.trainingService.cancelExercise(this.progress)
-      }else{
+      if (result) {
+        this.trainingService.cancelExercise(this.progress);
+      } else {
         this.startOrResumeTimer();
       }
     });
   }
-
-   
 }

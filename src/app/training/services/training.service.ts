@@ -8,10 +8,11 @@ import {
   doc,
   updateDoc,
 } from '@angular/fire/firestore';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { UIService } from 'src/app/core/services/ui.service';
-import * as fromRoot from '../../app.reducer';
+import * as fromTraining from '../store/training.reducer';
 import * as UI from '../../shared/ui.actions';
+import * as Training from '../store/training.actions';
 import { Exercise } from '../exercise.model';
 
 @Injectable({
@@ -28,7 +29,7 @@ export class TrainingService {
   constructor(
     private firestore: Firestore,
     private uiService: UIService,
-    private store: Store<fromRoot.State>
+    private store: Store<fromTraining.State>
   ) {}
 
   fetchAvailableExercises() {
@@ -45,9 +46,10 @@ export class TrainingService {
       })
       .then((response) => {
         this.store.dispatch(new UI.StopLoading());
+        this.store.dispatch(new Training.SetAvailableTraning(response));
         // this.uiService.loadingStateChanged.next(false);
-        this.availableExercises = response;
-        this.exercisesChanged.next([...this.availableExercises]);
+        // this.availableExercises = response;
+        // this.exercisesChanged.next([...this.availableExercises]);
       })
       .catch((error) => {
         this.store.dispatch(new UI.StopLoading());
@@ -62,41 +64,54 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string) {
+    this.store.dispatch(new Training.StartTraining(selectedId));
     // update using doc
-    const docRef = doc(this.firestore, 'availableExercises', selectedId);
-    updateDoc(docRef, {
-      lastSelected: new Date(),
-    });
-    this.runningExercise = this.availableExercises.find(
-      (ex: { id: string }) => ex.id === selectedId
-    );
-    this.exerciseChanged.next({ ...this.runningExercise });
+    // const docRef = doc(this.firestore, 'availableExercises', selectedId);
+    // updateDoc(docRef, {
+    //   lastSelected: new Date(),
+    // });
+    // this.runningExercise = this.availableExercises.find(
+    //   (ex: { id: string }) => ex.id === selectedId
+    // );
+    // this.exerciseChanged.next({ ...this.runningExercise });
   }
 
-  getRunningExercise() {
-    return { ...this.runningExercise };
-  }
+  // getRunningExercise() {
+  //   return { ...this.runningExercise };
+  // }
 
   completeExercise() {
-    this.addDataToDatabase({
-      ...this.runningExercise,
-      date: new Date(),
-      state: 'complete',
-    });
-    this.runningExercise = null;
-    this.exerciseChanged.next(this.runningExercise);
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe((exercise) => {
+        this.addDataToDatabase({
+          ...exercise,
+          date: new Date(),
+          state: 'complete',
+        });
+        this.store.dispatch(new Training.StopTraining());
+      });
+    // this.runningExercise = null;
+    // this.exerciseChanged.next(this.runningExercise);
   }
 
   cancelExercise(progress: number) {
-    this.addDataToDatabase({
-      ...this.runningExercise,
-      duration: this.runningExercise.duration * (progress * 100),
-      calorise: this.runningExercise.duration * (progress * 100),
-      date: new Date(),
-      state: 'canceld',
-    });
-    this.runningExercise = null;
-    this.exerciseChanged.next(this.runningExercise);
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe((exercise) => {
+        this.addDataToDatabase({
+          ...exercise,
+          duration: exercise.duration * (progress * 100),
+          calorise: exercise.duration * (progress * 100),
+          date: new Date(),
+          state: 'canceld',
+        });
+        this.store.dispatch(new Training.StopTraining());
+      });
+    // this.runningExercise = null;
+    // this.exerciseChanged.next(this.runningExercise);
   }
 
   fetchCompletedOrCanceledExercise() {
@@ -110,7 +125,8 @@ export class TrainingService {
         ];
       })
       .then((response) => {
-        this.finishedExercisesChanged.next(response);
+        // this.finishedExercisesChanged.next(response);
+        this.store.dispatch(new Training.SetFinishedTraning(response));
       })
       .catch((error) => {
         this.uiService.showSnackbar(error.message, null, 3000);
